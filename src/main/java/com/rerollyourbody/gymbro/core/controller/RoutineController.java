@@ -1,5 +1,6 @@
 package com.rerollyourbody.gymbro.core.controller;
 
+import com.rerollyourbody.gymbro.core.APIResource.APIPaths;
 import com.rerollyourbody.gymbro.core.exception.RoutineNotFoundException;
 import com.rerollyourbody.gymbro.core.model.DTO.RoutineDTO;
 import com.rerollyourbody.gymbro.core.model.Routine;
@@ -16,14 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value = "/v1/routine", produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(value = APIPaths.API_VERSION_1_ROUTINE, produces = {MediaType.APPLICATION_JSON_VALUE})
 public class RoutineController {
+
+    private static final String ROUTINE_ID_PATH = "/{routineId}";
+    private static final String ROUTINE_ID_PATH_VARIABLE = "routineId";
 
     @Autowired
     private RoutineServiceImpl routineService;
 
-    @GetMapping("/{routineId}")
-    public ResponseEntity<RoutineDTO> getRoutineById(@PathVariable("routineId") String routineId){
+    @GetMapping(ROUTINE_ID_PATH)
+    public ResponseEntity<RoutineDTO> getRoutineById(@PathVariable(ROUTINE_ID_PATH_VARIABLE) String routineId){
         try {
             UUID id = UUID.fromString(routineId);
             RoutineDTO routineDTO = routineService.getRoutineById(id);
@@ -34,8 +38,8 @@ public class RoutineController {
         }
     }
 
-    @DeleteMapping("/{routineId}")
-    public void deleteRoutine(@PathVariable("routineId") String routineId) {
+    @DeleteMapping(ROUTINE_ID_PATH)
+    public void deleteRoutine(@PathVariable(ROUTINE_ID_PATH_VARIABLE) String routineId) {
         try {
             UUID id = UUID.fromString(routineId);
             routineService.deleteRoutine(id);
