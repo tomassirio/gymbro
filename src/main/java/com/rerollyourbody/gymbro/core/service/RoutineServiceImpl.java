@@ -5,40 +5,30 @@ import com.rerollyourbody.gymbro.core.model.DTO.RoutineDTO;
 import com.rerollyourbody.gymbro.core.model.Exercise;
 import com.rerollyourbody.gymbro.core.model.Routine;
 import com.rerollyourbody.gymbro.core.model.Set;
+import com.rerollyourbody.gymbro.core.model.factory.RoutineFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
 import java.util.UUID;
 
 @Service
 public class RoutineServiceImpl implements RoutineService{
 
     @Override
-    public RoutineDTO createRoutine() {
-        return null;
+    public RoutineDTO createRoutine(RoutineDTO routineDTO) {
+        UUID routineId = UUID.randomUUID();
+        Routine routine = RoutineFactory.createRoutine(routineId);
+        if (routineDTO.getExercises() != null) {
+                routine.setExercises(routineDTO.getExercises());
+        }
+        //Repository Save
+        return RoutineDTO.of(routine);
     }
 
-    @Override
-    public RoutineDTO addExercise(Exercise exercise, UUID routineId) {
-        return null;
-    }
 
     @Override
-    public RoutineDTO removeExercise(Exercise exercise, UUID routineId) {
-        return null;
-    }
-
-    @Override
-    public RoutineDTO addSetToExercise(Exercise exercise, Set set, UUID routineId) {
-        return null;
-    }
-
-    @Override
-    public RoutineDTO removeSetToExercise(Exercise exercise, Set set, UUID routineId) {
-        return null;
-    }
-
-    @Override
-    public RoutineDTO getRoutineById(UUID id) {
+    public RoutineDTO getRoutine(UUID id) {
+        //Repository get id
         Routine routine = new Routine();
         Exercise exercise = new Exercise("Squat", BodyFocus.LEGS);
         Set set = new Set(5, 100.0f);
@@ -48,7 +38,16 @@ public class RoutineServiceImpl implements RoutineService{
     }
 
     @Override
-    public void deleteRoutine(UUID id) {
+    public RoutineDTO modifyRoutine(UUID routineId, RoutineDTO dto) {
+        //Repository get id
+        Routine routine = new Routine();
+        routine.setRoutineId(routineId);
+        routine.setExercises(dto.getExercises());
+        return RoutineDTO.of(routine);
+    }
 
+    @Override
+    public void deleteRoutine(UUID id) {
+        //Repository delete id
     }
 }

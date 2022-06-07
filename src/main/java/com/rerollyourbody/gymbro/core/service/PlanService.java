@@ -6,9 +6,9 @@ import com.rerollyourbody.gymbro.core.model.Routine;
 import java.util.UUID;
 
 public interface PlanService {
-    PlanDTO createPlan();
-    PlanDTO addRoutineToPlan(Routine routine, UUID planId);
-    PlanDTO changeRoutineToPlan(Routine routine, UUID planId);
+    PlanDTO createPlan(PlanDTO planDTO);
+    PlanDTO getPlan(UUID id);
+    PlanDTO changePlan(UUID planId, PlanDTO planDTO);
     void deletePlan(UUID planId);
 
 }
