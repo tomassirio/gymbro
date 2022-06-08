@@ -2,11 +2,7 @@ package com.rerollyourbody.gymbro.core.controller;
 
 import com.rerollyourbody.gymbro.core.APIResource.APIPaths;
 import com.rerollyourbody.gymbro.core.exception.PlanNotFoundException;
-import com.rerollyourbody.gymbro.core.exception.RoutineNotFoundException;
 import com.rerollyourbody.gymbro.core.model.DTO.PlanDTO;
-import com.rerollyourbody.gymbro.core.model.DTO.RoutineDTO;
-import com.rerollyourbody.gymbro.core.model.Plan;
-import com.rerollyourbody.gymbro.core.service.PlanService;
 import com.rerollyourbody.gymbro.core.service.PlanServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
