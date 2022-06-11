@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,7 +16,7 @@ public class PlanDTO {
     private UUID planId;
     private UUID userId;
 
-    private List<String> routineIds;
+    private List<RoutineDTO> routines;
     private Integer week;
     private Integer totalWeeks;
 
@@ -25,9 +24,9 @@ public class PlanDTO {
         return new PlanDTO(
                 plan.getId(),
                 plan.getUserId(),
-                plan.getRoutineIds()
+                plan.getRoutines()
                         .stream()
-                        .map(UUID::toString)
+                        .map(RoutineDTO::of)
                         .collect(Collectors.toList()),
                 plan.getWeek(),
                 plan.getTotalWeeks()

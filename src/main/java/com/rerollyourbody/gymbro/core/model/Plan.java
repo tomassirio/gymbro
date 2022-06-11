@@ -22,7 +22,7 @@ public class Plan {
     private UUID id;
     private UUID userId;
 
-    private List<UUID> routineIds;
+    private List<Routine> routines;
     private Integer week;
     private Integer totalWeeks;
 

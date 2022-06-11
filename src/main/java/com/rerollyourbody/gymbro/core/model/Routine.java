@@ -17,7 +17,6 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document
 public class Routine {
     @Id
     private UUID routineId;
