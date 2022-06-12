@@ -6,9 +6,8 @@ import com.rerollyourbody.gymbro.core.model.Plan;
 import com.rerollyourbody.gymbro.core.model.Routine;
 import com.rerollyourbody.gymbro.core.model.Set;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,7 +16,7 @@ public class TestUtils {
         return Plan.builder()
                 .id(UUID.randomUUID())
                 .userId(UUID.randomUUID())
-                .routines(List.of(createRoutine()))
+                .routines(new ArrayList<>(Arrays.asList(createRoutine())))
                 .week(2)
                 .totalWeeks(13)
                 .build();
@@ -26,7 +25,7 @@ public class TestUtils {
     public static Routine createRoutine() {
         return Routine.builder()
                 .routineId(UUID.randomUUID())
-                .exercises(Map.of(createExercise(), List.of(createSet())))
+                .exercises(Map.of(createExercise(), new ArrayList<>(Arrays.asList(createSet()))))
                 .build();
     }
 

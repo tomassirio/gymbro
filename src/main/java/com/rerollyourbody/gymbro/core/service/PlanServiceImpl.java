@@ -25,8 +25,7 @@ public class PlanServiceImpl implements PlanService{
 
     @Override
     public PlanDTO createPlan(PlanDTO planDTO) {
-        UUID uuid = UUID.randomUUID();
-        Plan plan = PlanFactory.createPlan(uuid);
+        Plan plan = PlanFactory.createPlan();
         if (!planDTO.getRoutines().isEmpty() && planDTO.getTotalWeeks() != null) {
             planDTO.getRoutines().forEach(dto ->
                     PlanManager.addRoutineToPlan(

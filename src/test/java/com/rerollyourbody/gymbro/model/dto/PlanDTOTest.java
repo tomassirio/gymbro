@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PlanDTOTest {
     @Test
-    public void testOfWhenPlanIsValid() {
+    public void test_of_when_plan_is_valid() {
         Plan plan = createPlan();
         PlanDTO planDTO = PlanDTO.of(plan);
 

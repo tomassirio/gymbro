@@ -19,13 +19,11 @@ public class PlanManager {
         return plan;
     }
 
-    public static Plan removeRoutineFromPlan(final UUID routineId, Plan plan) {
+    public static void removeRoutineFromPlan(final UUID routineId, Plan plan) {
         plan.getRoutines().removeIf(r -> r.getRoutineId().equals(routineId));
-        return plan;
     }
 
-    public static Plan addRoutineToPlan(final Routine routine, Plan plan){
+    public static void addRoutineToPlan(final Routine routine, Plan plan){
         plan.getRoutines().add(routine);
-        return plan;
     }
 }
