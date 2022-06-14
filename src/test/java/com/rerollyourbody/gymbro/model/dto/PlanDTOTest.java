@@ -6,6 +6,7 @@ import com.rerollyourbody.gymbro.core.model.Plan;
 import com.rerollyourbody.gymbro.core.model.mapper.RoutineMapper;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,5 @@ public class PlanDTOTest {
         assertEquals(plan.getWeek(), planDTO.getWeek());
         assertEquals(plan.getTotalWeeks(), planDTO.getTotalWeeks());
         assertEquals(plan.getRoutines().size(), planDTO.getRoutines().size());
-//        assertTrue(plan.getRoutines().containsAll(planDTO.getRoutines().stream().map(RoutineMapper::map).collect(Collectors.toList())));
-
     }
 }
