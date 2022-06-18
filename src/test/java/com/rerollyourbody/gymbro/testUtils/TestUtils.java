@@ -1,6 +1,8 @@
 package com.rerollyourbody.gymbro.testUtils;
 
 import com.rerollyourbody.gymbro.core.model.BodyFocus;
+import com.rerollyourbody.gymbro.core.model.DTO.PlanDTO;
+import com.rerollyourbody.gymbro.core.model.DTO.RoutineDTO;
 import com.rerollyourbody.gymbro.core.model.Exercise;
 import com.rerollyourbody.gymbro.core.model.Plan;
 import com.rerollyourbody.gymbro.core.model.Routine;
@@ -8,14 +10,20 @@ import com.rerollyourbody.gymbro.core.model.Set;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class TestUtils {
+
+    private static final UUID PLAN_ID = UUID.fromString("2bac64a9-b811-4756-96c4-cf9b067f8182");
+    private static final UUID USER_ID = UUID.fromString("fde630e0-6ceb-4750-946c-83b410f1d726");
+    private static final UUID ROUTINE_ID = UUID.fromString("cd086b6d-7afc-421f-b8cf-b9bfe4fe2d06");
+
     public static Plan createPlan(){
         return Plan.builder()
-                .id(UUID.randomUUID())
-                .userId(UUID.randomUUID())
+                .id(PLAN_ID)
+                .userId(USER_ID)
                 .routines(new ArrayList<>(Arrays.asList(createRoutine())))
                 .week(2)
                 .totalWeeks(13)
@@ -24,7 +32,7 @@ public class TestUtils {
 
     public static Routine createRoutine() {
         return Routine.builder()
-                .routineId(UUID.randomUUID())
+                .routineId(ROUTINE_ID)
                 .exercises(Map.of(createExercise(), new ArrayList<>(Arrays.asList(createSet()))))
                 .build();
     }
@@ -40,6 +48,16 @@ public class TestUtils {
         return Set.builder()
                 .weight(69.0f)
                 .repetitions(420)
+                .build();
+    }
+
+    public static PlanDTO createValidPlanDTO() {
+        return PlanDTO.builder()
+                .planId(PLAN_ID.toString())
+                .userId(USER_ID.toString())
+                .routines(List.of(RoutineDTO.of(createRoutine())))
+                .totalWeeks(4)
+                .week(1)
                 .build();
     }
 }
