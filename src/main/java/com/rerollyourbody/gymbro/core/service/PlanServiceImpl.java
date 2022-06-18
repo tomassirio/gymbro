@@ -14,6 +14,7 @@ import javax.transaction.Transactional;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -68,7 +69,8 @@ public class PlanServiceImpl implements PlanService{
         }
         Plan plan = planOptional.get();
         Routine routine = routineService.getRoutineById(routineId);
-        plan.getRoutines().remove(routine);
+        plan.getRoutines().removeIf(rout -> rout.getRoutineId().equals(routine.getRoutineId()));
+
         return plan;
     }
 
@@ -79,7 +81,10 @@ public class PlanServiceImpl implements PlanService{
             throw new PlanNotFoundException("No existing plan with id: " + planId);
         }
         Plan plan = planOptional.get();
-        plan.getRoutines().forEach(routine -> routineService.modifyRoutine(dto));
+        plan.getRoutines().stream()
+                .filter(routine -> routine.getRoutineId().equals(routineId))
+                .findFirst()
+                .ifPresent(routine -> routine = routineService.modifyRoutine(dto));
         return plan;
     }
 

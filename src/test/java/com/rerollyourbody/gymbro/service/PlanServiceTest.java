@@ -1,6 +1,7 @@
 package com.rerollyourbody.gymbro.service;
 
 import com.rerollyourbody.gymbro.core.exception.PlanNotFoundException;
+import com.rerollyourbody.gymbro.core.exception.RoutineNotFoundException;
 import com.rerollyourbody.gymbro.core.model.DTO.PlanDTO;
 import com.rerollyourbody.gymbro.core.model.DTO.RoutineDTO;
 import com.rerollyourbody.gymbro.core.model.Plan;
@@ -135,8 +136,66 @@ public class PlanServiceTest {
 
         Plan response = planService.addRoutineToPlan(UUID.randomUUID(), routineDTO);
 
+        verify(repository, Mockito.times(1)).findById(any());
+
         assertTrue(response.getRoutines().contains(routine));
         assertEquals(response.getRoutines().size(), 1);
     }
 
+    @Test(expected = PlanNotFoundException.class)
+    public void test_addRoutineToPlan_when_plan_doesnt_exist() {
+        when(repository.findById(any())).thenReturn(Optional.empty());
+
+        planService.addRoutineToPlan(UUID.randomUUID(), createValidRoutineDTO());
+
+        verify(repository, Mockito.times(1)).findById(any());
+    }
+
+    @Test
+    public void test_removeRoutineFromPlan_when_plan_exists_and_routine_exists() {
+        Plan expectedPlan = createPlan();
+        when(repository.findById(any())).thenReturn(java.util.Optional.ofNullable(expectedPlan));
+
+        Routine routine = createRoutine();
+        when(routineService.getRoutineById(any())).thenReturn(routine);
+
+        Plan response = planService.removeRoutineFromPlan(UUID.randomUUID(), UUID.randomUUID());
+
+        verify(repository, Mockito.times(1)).findById(any());
+
+        assertTrue(!response.getRoutines().contains(routine));
+        assertTrue(response.getRoutines().isEmpty());
+    }
+
+    @Test(expected = PlanNotFoundException.class)
+    public void test_removeRoutineFromPlan_when_plan_doesnt_exist() {
+        when(repository.findById(any())).thenReturn(Optional.empty());
+
+        planService.removeRoutineFromPlan(UUID.randomUUID(), UUID.randomUUID());
+
+        verify(repository, Mockito.times(1)).findById(any());
+    }
+
+
+    @Test(expected = RoutineNotFoundException.class)
+    public void test_removeRoutineFromPlan_when_plan_exists_and_routine_doesnt() {
+        Plan expectedPlan = createPlan();
+        when(repository.findById(any())).thenReturn(java.util.Optional.ofNullable(expectedPlan));
+
+        when(routineService.getRoutineById(any())).thenThrow(RoutineNotFoundException.class);
+
+        planService.removeRoutineFromPlan(UUID.randomUUID(), UUID.randomUUID());
+
+        verify(repository, Mockito.times(1)).findById(any());
+        verify(routineService, Mockito.times(1)).getRoutineById(any());
+    }
+
+    @Test
+    public void test_modifyRoutine_when_plan_exists() {
+        Plan expectedPlan = createPlan();
+        when(repository.findById(any())).thenReturn(java.util.Optional.ofNullable(expectedPlan));
+
+
+
+    }
 }
