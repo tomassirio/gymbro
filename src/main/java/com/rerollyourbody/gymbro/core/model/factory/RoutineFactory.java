@@ -6,9 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.UUID;
 
 public class RoutineFactory {
-    public static Routine createRoutine(UUID uuid){
+    public static Routine createRoutine(){
      return Routine.builder()
-             .routineId(uuid)
+             .routineId(UUID.randomUUID())
              .exercises(new LinkedHashMap<>())
              .build();
     }

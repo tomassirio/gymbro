@@ -24,29 +24,28 @@ public class PlanServiceImpl implements PlanService{
     private PlanRepository planRepository;
 
     @Override
-    public PlanDTO createPlan(PlanDTO planDTO) {
-        UUID uuid = UUID.randomUUID();
-        Plan plan = PlanFactory.createPlan(uuid);
+    public Plan createPlan(PlanDTO planDTO) {
+        Plan plan = PlanFactory.createPlan();
         if (!planDTO.getRoutines().isEmpty() && planDTO.getTotalWeeks() != null) {
             planDTO.getRoutines().forEach(dto ->
                     PlanManager.addRoutineToPlan(
                             RoutineMapper.map(dto), plan));
         }
         planRepository.save(plan);
-        return PlanDTO.of(plan);
+        return plan;
     }
 
     @Override
-    public PlanDTO getPlan(UUID planId) {
+    public Plan getPlan(UUID planId) {
         Optional<Plan> planOptional = planRepository.findById(planId);
         if(planOptional.isEmpty()){
             throw new PlanNotFoundException("No existing plan with id: " + planId);
         }
-        return PlanDTO.of(planOptional.get());
+        return planOptional.get();
     }
 
     @Override
-    public PlanDTO addRoutineToPlan(UUID planId, RoutineDTO dto) {
+    public Plan addRoutineToPlan(UUID planId, RoutineDTO dto) {
         Optional<Plan> planOptional = planRepository.findById(planId);
         if(planOptional.isEmpty()){
             throw new PlanNotFoundException("No existing plan with id: " + planId);
@@ -55,11 +54,11 @@ public class PlanServiceImpl implements PlanService{
         PlanManager.addRoutineToPlan(RoutineMapper.map(dto), plan);
         planRepository.save(plan);
 
-        return PlanDTO.of(plan);
+        return plan;
     }
 
     @Override
-    public PlanDTO removeRoutineFromPlan(UUID planId, UUID routineId) {
+    public Plan removeRoutineFromPlan(UUID planId, UUID routineId) {
         Optional<Plan> planOptional = planRepository.findById(planId);
         if(planOptional.isEmpty()){
             throw new PlanNotFoundException("No existing plan with id: " + planId);
@@ -68,18 +67,18 @@ public class PlanServiceImpl implements PlanService{
         PlanManager.removeRoutineFromPlan(routineId, plan);
         planRepository.save(plan);
 
-        return PlanDTO.of(plan);
+        return plan;
     }
 
     @Override
-    public PlanDTO modifyRoutineToPlan(UUID planId, UUID routineId, RoutineDTO dto) {
+    public Plan modifyRoutineToPlan(UUID planId, UUID routineId, RoutineDTO dto) {
         Optional<Plan> planOptional = planRepository.findById(planId);
         if(planOptional.isEmpty()){
             throw new PlanNotFoundException("No existing plan with id: " + planId);
         }
         Plan plan = planOptional.get();
         plan.getRoutines().stream().map(r -> r.equals(routineId) ? RoutineMapper.map(dto) : r);
-        return PlanDTO.of(plan);
+        return plan;
     }
 
     @Override

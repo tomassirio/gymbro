@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class PlanFactory {
-    public static Plan createPlan(UUID uuid){
+    public static Plan createPlan(){
      return Plan.builder()
-             .id(uuid)
+             .id(UUID.randomUUID())
              .routines(new ArrayList<>())
              .week(1)
              .totalWeeks(0)

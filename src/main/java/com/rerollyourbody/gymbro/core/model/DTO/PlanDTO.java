@@ -2,19 +2,20 @@ package com.rerollyourbody.gymbro.core.model.DTO;
 
 import com.rerollyourbody.gymbro.core.model.Plan;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PlanDTO {
-    private UUID planId;
-    private UUID userId;
+    private String planId;
+    private String userId;
 
     private List<RoutineDTO> routines;
     private Integer week;
@@ -22,8 +23,8 @@ public class PlanDTO {
 
     public static PlanDTO of(Plan plan){
         return new PlanDTO(
-                plan.getId(),
-                plan.getUserId(),
+                plan.getId().toString(),
+                plan.getUserId().toString(),
                 plan.getRoutines()
                         .stream()
                         .map(RoutineDTO::of)
