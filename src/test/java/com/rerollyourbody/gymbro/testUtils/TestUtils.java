@@ -58,12 +58,10 @@ public class TestUtils {
     }
 
     public static PlanDTO createValidPlanDTO() {
-        return PlanDTO.builder()
-                .planId(PLAN_ID.toString())
-                .userId(USER_ID.toString())
-                .routines(List.of(RoutineDTO.of(createRoutine())))
-                .totalWeeks(13)
-                .week(2)
-                .build();
+        return PlanDTO.of(createPlan());
+    }
+
+    public static RoutineDTO createValidRoutineDTO() {
+        return RoutineDTO.of(createRoutine());
     }
 }
