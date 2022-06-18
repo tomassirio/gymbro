@@ -7,6 +7,7 @@ import com.rerollyourbody.gymbro.core.model.Exercise;
 import com.rerollyourbody.gymbro.core.model.Plan;
 import com.rerollyourbody.gymbro.core.model.Routine;
 import com.rerollyourbody.gymbro.core.model.Set;
+import com.rerollyourbody.gymbro.core.model.WorkoutExercise;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +34,12 @@ public class TestUtils {
     public static Routine createRoutine() {
         return Routine.builder()
                 .routineId(ROUTINE_ID)
-                .exercises(Map.of(createExercise(), new ArrayList<>(Arrays.asList(createSet()))))
+                .workoutExercises(
+                        List.of(
+                                WorkoutExercise.builder()
+                                        .exercise(createExercise())
+                                        .sets(List.of(createSet()))
+                                        .build()))
                 .build();
     }
 
@@ -56,8 +62,8 @@ public class TestUtils {
                 .planId(PLAN_ID.toString())
                 .userId(USER_ID.toString())
                 .routines(List.of(RoutineDTO.of(createRoutine())))
-                .totalWeeks(4)
-                .week(1)
+                .totalWeeks(13)
+                .week(2)
                 .build();
     }
 }

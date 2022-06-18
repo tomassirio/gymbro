@@ -4,15 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @Builder
-@Document
-public class Exercise {
+public class WorkoutExercise {
 
-    private String name;
-    private BodyFocus bodyFocus;
+    private Exercise exercise;
+    private List<Set> sets;
 }

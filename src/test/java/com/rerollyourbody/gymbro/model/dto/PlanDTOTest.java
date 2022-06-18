@@ -3,7 +3,6 @@ package com.rerollyourbody.gymbro.model.dto;
 import com.rerollyourbody.gymbro.core.model.DTO.PlanDTO;
 import com.rerollyourbody.gymbro.core.model.DTO.RoutineDTO;
 import com.rerollyourbody.gymbro.core.model.Plan;
-import com.rerollyourbody.gymbro.core.model.mapper.RoutineMapper;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

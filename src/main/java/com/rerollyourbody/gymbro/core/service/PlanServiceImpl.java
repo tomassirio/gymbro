@@ -6,33 +6,30 @@ import com.rerollyourbody.gymbro.core.model.DTO.RoutineDTO;
 import com.rerollyourbody.gymbro.core.model.Plan;
 import com.rerollyourbody.gymbro.core.model.Routine;
 import com.rerollyourbody.gymbro.core.model.factory.PlanFactory;
-import com.rerollyourbody.gymbro.core.model.manager.PlanManager;
-import com.rerollyourbody.gymbro.core.model.mapper.RoutineMapper;
 import com.rerollyourbody.gymbro.core.repository.PlanRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.transaction.Transactional;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class PlanServiceImpl implements PlanService{
 
-    @Autowired
-    private PlanRepository planRepository;
+    private final PlanRepository planRepository;
+    private final RoutineServiceImpl routineService;
 
     @Override
     public Plan createPlan(PlanDTO planDTO) {
         Plan plan = PlanFactory.createPlan();
         if (!planDTO.getRoutines().isEmpty() && planDTO.getTotalWeeks() != null) {
-            planDTO.getRoutines().forEach(dto ->
-                    PlanManager.addRoutineToPlan(
-                            RoutineMapper.map(dto), plan));
+            planDTO.getRoutines().forEach(dto -> plan.getRoutines().add(routineService.createRoutine(dto)));
         }
-        planRepository.save(plan);
-        return plan;
+        return planRepository.save(plan);
     }
 
     @Override
@@ -51,8 +48,14 @@ public class PlanServiceImpl implements PlanService{
             throw new PlanNotFoundException("No existing plan with id: " + planId);
         }
         Plan plan = planOptional.get();
-        PlanManager.addRoutineToPlan(RoutineMapper.map(dto), plan);
-        planRepository.save(plan);
+        Routine routine;
+        try {
+            routine = routineService.getRoutineById(UUID.fromString(dto.getId()));
+        } catch (NoSuchElementException e) {
+            routine = routineService.createRoutine(dto);
+        }
+
+        plan.getRoutines().add(routine);
 
         return plan;
     }
@@ -64,9 +67,8 @@ public class PlanServiceImpl implements PlanService{
             throw new PlanNotFoundException("No existing plan with id: " + planId);
         }
         Plan plan = planOptional.get();
-        PlanManager.removeRoutineFromPlan(routineId, plan);
-        planRepository.save(plan);
-
+        Routine routine = routineService.getRoutineById(routineId);
+        plan.getRoutines().remove(routine);
         return plan;
     }
 
@@ -77,7 +79,7 @@ public class PlanServiceImpl implements PlanService{
             throw new PlanNotFoundException("No existing plan with id: " + planId);
         }
         Plan plan = planOptional.get();
-        plan.getRoutines().stream().map(r -> r.equals(routineId) ? RoutineMapper.map(dto) : r);
+        plan.getRoutines().forEach(routine -> routineService.modifyRoutine(dto));
         return plan;
     }
 

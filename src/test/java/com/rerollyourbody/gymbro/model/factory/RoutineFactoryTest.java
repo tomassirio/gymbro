@@ -18,10 +18,10 @@ public class RoutineFactoryTest {
 
         Routine templateRoutine = new Routine();
         templateRoutine.setRoutineId(routine.getRoutineId()); //This is awful. I know. But I'm in the middle of a production crisis => More work == Better
-        templateRoutine.setExercises(new LinkedHashMap<>());
+        templateRoutine.setWorkoutExercises(new ArrayList<>());
 
         assertEquals(routine.getRoutineId(), templateRoutine.getRoutineId());
-        assertEquals(routine.getExercises(), templateRoutine.getExercises());
+        assertEquals(routine.getWorkoutExercises(), templateRoutine.getWorkoutExercises());
     }
 
 }
