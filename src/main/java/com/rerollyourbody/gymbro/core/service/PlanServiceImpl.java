@@ -81,10 +81,10 @@ public class PlanServiceImpl implements PlanService{
             throw new PlanNotFoundException("No existing plan with id: " + planId);
         }
         Plan plan = planOptional.get();
-        plan.getRoutines().stream()
-                .filter(routine -> routine.getRoutineId().equals(routineId))
-                .findFirst()
-                .ifPresent(routine -> routine = routineService.modifyRoutine(dto));
+        Routine finalRoutine = routineService.modifyRoutine(dto);
+        plan.setRoutines(plan.getRoutines().stream()
+                .map(routine -> routine.getRoutineId().equals(routineId) ? finalRoutine : routine)
+                .collect(Collectors.toList()));
         return plan;
     }
 

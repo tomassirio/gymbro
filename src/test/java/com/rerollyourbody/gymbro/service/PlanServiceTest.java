@@ -4,8 +4,10 @@ import com.rerollyourbody.gymbro.core.exception.PlanNotFoundException;
 import com.rerollyourbody.gymbro.core.exception.RoutineNotFoundException;
 import com.rerollyourbody.gymbro.core.model.DTO.PlanDTO;
 import com.rerollyourbody.gymbro.core.model.DTO.RoutineDTO;
+import com.rerollyourbody.gymbro.core.model.Exercise;
 import com.rerollyourbody.gymbro.core.model.Plan;
 import com.rerollyourbody.gymbro.core.model.Routine;
+import com.rerollyourbody.gymbro.core.model.WorkoutExercise;
 import com.rerollyourbody.gymbro.core.model.factory.PlanFactory;
 import com.rerollyourbody.gymbro.core.repository.PlanRepository;
 import com.rerollyourbody.gymbro.core.service.PlanServiceImpl;
@@ -19,14 +21,17 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static com.rerollyourbody.gymbro.testUtils.TestUtils.createPlan;
 import static com.rerollyourbody.gymbro.testUtils.TestUtils.createRoutine;
+import static com.rerollyourbody.gymbro.testUtils.TestUtils.createSet;
 import static com.rerollyourbody.gymbro.testUtils.TestUtils.createValidPlanDTO;
 import static com.rerollyourbody.gymbro.testUtils.TestUtils.createValidRoutineDTO;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -195,7 +200,63 @@ public class PlanServiceTest {
         Plan expectedPlan = createPlan();
         when(repository.findById(any())).thenReturn(java.util.Optional.ofNullable(expectedPlan));
 
+        Routine routine = createRoutine();
+        routine.setWorkoutExercises(List.of(WorkoutExercise.builder()
+                .exercise(Exercise.builder().name("TEST").build())
+                .sets(List.of(createSet())).build()));
 
+        when(routineService.modifyRoutine(any())).thenReturn(routine);
+
+        Plan response = planService.modifyRoutineToPlan(UUID.randomUUID(), routine.getRoutineId(), RoutineDTO.of(routine));
+
+        verify(repository, Mockito.times(1)).findById(any());
+        verify(routineService, Mockito.times(1)).modifyRoutine(any());
+
+        assertTrue(response.getRoutines().contains(routine));
+        assertEquals(response.getRoutines().size(), 1);
+    }
+
+    @Test
+    public void test_modifyRoutine_when_plan_exists_but_routineId_is_not_in_plan() {
+        Plan expectedPlan = createPlan();
+        when(repository.findById(any())).thenReturn(java.util.Optional.ofNullable(expectedPlan));
+
+        Routine routine = createRoutine();
+        routine.setWorkoutExercises(List.of(WorkoutExercise.builder()
+                .exercise(Exercise.builder().name("TEST").build())
+                .sets(List.of(createSet())).build()));
+
+        when(routineService.modifyRoutine(any())).thenReturn(routine);
+
+        Plan response = planService.modifyRoutineToPlan(UUID.randomUUID(), UUID.randomUUID(), RoutineDTO.of(routine));
+
+        verify(repository, Mockito.times(1)).findById(any());
+        verify(routineService, Mockito.times(1)).modifyRoutine(any());
+
+        assertFalse(response.getRoutines().contains(routine));
+        assertEquals(response.getRoutines().size(), 1);
+    }
+
+    @Test(expected = PlanNotFoundException.class)
+    public void test_modifyRoutine_when_plan_doesnt_exist() {
+        when(repository.findById(any())).thenReturn(Optional.empty());
+
+        planService.modifyRoutineToPlan(UUID.randomUUID(), UUID.randomUUID(), createValidRoutineDTO());
+
+        verify(repository, Mockito.times(1)).findById(any());
+    }
+
+    @Test
+    public void test_deletePlan_when_plan_exists() {
+        Plan plan = createPlan();
+
+        planService.createPlan(PlanDTO.of(plan));
+
+        verify(repository, Mockito.times(1)).save(any());
+
+        planService.deletePlan(plan.getId());
+
+        verify(repository, Mockito.times(1)).deleteById(any());
 
     }
 }

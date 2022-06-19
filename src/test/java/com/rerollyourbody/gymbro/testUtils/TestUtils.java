@@ -35,11 +35,11 @@ public class TestUtils {
         return Routine.builder()
                 .routineId(ROUTINE_ID)
                 .workoutExercises(
-                        List.of(
+                        new ArrayList<>(Arrays.asList(
                                 WorkoutExercise.builder()
                                         .exercise(createExercise())
                                         .sets(List.of(createSet()))
-                                        .build()))
+                                        .build())))
                 .build();
     }
 
