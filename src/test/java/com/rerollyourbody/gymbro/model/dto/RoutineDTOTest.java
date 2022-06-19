@@ -17,6 +17,6 @@ public class RoutineDTOTest {
         RoutineDTO routineDTO = RoutineDTO.of(routine);
 
         assertEquals(UUID.fromString(routineDTO.getId()), routine.getRoutineId());
-        assertEquals(routineDTO.getExercises().size(), routine.getExercises().size());
+        assertEquals(routineDTO.getWorkoutExercises().size(), routine.getWorkoutExercises().size());
     }
 }

@@ -9,6 +9,7 @@ public class PlanFactory {
     public static Plan createPlan(){
      return Plan.builder()
              .id(UUID.randomUUID())
+             .userId(UUID.randomUUID())
              .routines(new ArrayList<>())
              .week(1)
              .totalWeeks(0)
