@@ -2,6 +2,8 @@ package com.rerollyourbody.gymbro.core.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,14 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Document
 public class Routine {
-    @Id
     private UUID routineId;
     private List<WorkoutExercise> workoutExercises;
 }

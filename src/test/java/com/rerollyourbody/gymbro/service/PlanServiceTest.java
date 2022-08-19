@@ -1,5 +1,6 @@
 package com.rerollyourbody.gymbro.service;
 
+import com.rerollyourbody.gymbro.core.exception.PlanCreationException;
 import com.rerollyourbody.gymbro.core.exception.PlanNotFoundException;
 import com.rerollyourbody.gymbro.core.exception.RoutineNotFoundException;
 import com.rerollyourbody.gymbro.core.model.DTO.PlanDTO;
@@ -11,7 +12,6 @@ import com.rerollyourbody.gymbro.core.model.WorkoutExercise;
 import com.rerollyourbody.gymbro.core.model.factory.PlanFactory;
 import com.rerollyourbody.gymbro.core.repository.PlanRepository;
 import com.rerollyourbody.gymbro.core.service.PlanServiceImpl;
-import com.rerollyourbody.gymbro.core.service.RoutineServiceImpl;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -32,6 +32,7 @@ import static com.rerollyourbody.gymbro.testUtils.TestUtils.createValidPlanDTO;
 import static com.rerollyourbody.gymbro.testUtils.TestUtils.createValidRoutineDTO;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -42,8 +43,6 @@ public class PlanServiceTest {
 
     @Mock
     private PlanRepository repository;
-    @Mock
-    private RoutineServiceImpl routineService;
 
     @InjectMocks
     private PlanServiceImpl planService;
@@ -84,23 +83,15 @@ public class PlanServiceTest {
         Assertions.assertEquals(expectedResponse.getTotalWeeks(), response.getTotalWeeks());
     }
 
-    @Test
+    @Test(expected = PlanCreationException.class)
     public void test_createPlan_when_planDto_has_no_totalWeeks() {
         PlanDTO planDTO = createValidPlanDTO();
         planDTO.setTotalWeeks(null);
 
-        Plan expectedResponse = PlanFactory.createPlan();
-
-        when(repository.save(any())).thenReturn(expectedResponse);
-        Plan response = planService.createPlan(planDTO);
+        planService.createPlan(planDTO);
 
         verify(repository, Mockito.times(1)).save(any());
 
-        Assertions.assertEquals(expectedResponse.getUserId(), response.getUserId());
-        Assertions.assertEquals(expectedResponse.getId(), response.getId());
-        Assertions.assertTrue(expectedResponse.getRoutines().containsAll(response.getRoutines()));
-        Assertions.assertEquals(expectedResponse.getWeek(), response.getWeek());
-        Assertions.assertEquals(expectedResponse.getTotalWeeks(), response.getTotalWeeks());
     }
 
     @Test
@@ -134,17 +125,16 @@ public class PlanServiceTest {
         expectedPlan.setRoutines(new ArrayList<>());
         when(repository.findById(any())).thenReturn(java.util.Optional.ofNullable(expectedPlan));
 
-        RoutineDTO routineDTO = createValidRoutineDTO();
         Routine routine = createRoutine();
 
-        when(routineService.getRoutineById(any())).thenReturn(routine);
-
-        Plan response = planService.addRoutineToPlan(UUID.randomUUID(), routineDTO);
+        when(repository.save(any())).thenReturn(expectedPlan);
+        Plan response = planService.addRoutineToPlan(UUID.randomUUID(), RoutineDTO.of(routine));
 
         verify(repository, Mockito.times(1)).findById(any());
 
-        assertTrue(response.getRoutines().contains(routine));
         assertEquals(response.getRoutines().size(), 1);
+        assertEquals(response.getRoutines().stream().findFirst().get().getWorkoutExercises(), routine.getWorkoutExercises());
+        assertNotEquals(response.getRoutines().stream().findFirst().get().getRoutineId(), routine.getRoutineId());
     }
 
     @Test(expected = PlanNotFoundException.class)
@@ -162,13 +152,13 @@ public class PlanServiceTest {
         when(repository.findById(any())).thenReturn(java.util.Optional.ofNullable(expectedPlan));
 
         Routine routine = createRoutine();
-        when(routineService.getRoutineById(any())).thenReturn(routine);
 
-        Plan response = planService.removeRoutineFromPlan(UUID.randomUUID(), UUID.randomUUID());
+        when(repository.save(any())).thenReturn(expectedPlan);
+        Plan response = planService.removeRoutineFromPlan(UUID.randomUUID(), routine.getRoutineId());
 
         verify(repository, Mockito.times(1)).findById(any());
 
-        assertTrue(!response.getRoutines().contains(routine));
+        assertFalse(response.getRoutines().contains(routine));
         assertTrue(response.getRoutines().isEmpty());
     }
 
@@ -182,17 +172,16 @@ public class PlanServiceTest {
     }
 
 
-    @Test(expected = RoutineNotFoundException.class)
+    @Test
     public void test_removeRoutineFromPlan_when_plan_exists_and_routine_doesnt() {
         Plan expectedPlan = createPlan();
         when(repository.findById(any())).thenReturn(java.util.Optional.ofNullable(expectedPlan));
 
-        when(routineService.getRoutineById(any())).thenThrow(RoutineNotFoundException.class);
-
         planService.removeRoutineFromPlan(UUID.randomUUID(), UUID.randomUUID());
 
         verify(repository, Mockito.times(1)).findById(any());
-        verify(routineService, Mockito.times(1)).getRoutineById(any());
+
+        assertEquals(expectedPlan.getRoutines().size(), 1);
     }
 
     @Test
@@ -205,18 +194,18 @@ public class PlanServiceTest {
                 .exercise(Exercise.builder().name("TEST").build())
                 .sets(List.of(createSet())).build()));
 
-        when(routineService.modifyRoutine(any())).thenReturn(routine);
+        expectedPlan.setRoutines(List.of(routine));
 
+        when(repository.save(any())).thenReturn(expectedPlan);
         Plan response = planService.modifyRoutineToPlan(UUID.randomUUID(), routine.getRoutineId(), RoutineDTO.of(routine));
 
         verify(repository, Mockito.times(1)).findById(any());
-        verify(routineService, Mockito.times(1)).modifyRoutine(any());
 
         assertTrue(response.getRoutines().contains(routine));
         assertEquals(response.getRoutines().size(), 1);
     }
 
-    @Test
+    @Test(expected = RoutineNotFoundException.class)
     public void test_modifyRoutine_when_plan_exists_but_routineId_is_not_in_plan() {
         Plan expectedPlan = createPlan();
         when(repository.findById(any())).thenReturn(java.util.Optional.ofNullable(expectedPlan));
@@ -226,15 +215,10 @@ public class PlanServiceTest {
                 .exercise(Exercise.builder().name("TEST").build())
                 .sets(List.of(createSet())).build()));
 
-        when(routineService.modifyRoutine(any())).thenReturn(routine);
 
         Plan response = planService.modifyRoutineToPlan(UUID.randomUUID(), UUID.randomUUID(), RoutineDTO.of(routine));
 
         verify(repository, Mockito.times(1)).findById(any());
-        verify(routineService, Mockito.times(1)).modifyRoutine(any());
-
-        assertFalse(response.getRoutines().contains(routine));
-        assertEquals(response.getRoutines().size(), 1);
     }
 
     @Test(expected = PlanNotFoundException.class)
