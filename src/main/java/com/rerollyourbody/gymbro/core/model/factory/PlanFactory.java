@@ -15,4 +15,14 @@ public class PlanFactory {
              .totalWeeks(0)
              .build();
     }
+
+    public static Plan createPlan(Integer totalWeeks){
+        return Plan.builder()
+                .id(UUID.randomUUID())
+                .userId(UUID.randomUUID())
+                .routines(new ArrayList<>())
+                .week(1)
+                .totalWeeks(totalWeeks)
+                .build();
+    }
 }

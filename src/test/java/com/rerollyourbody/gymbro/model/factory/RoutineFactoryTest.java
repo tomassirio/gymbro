@@ -1,26 +1,38 @@
 package com.rerollyourbody.gymbro.model.factory;
 
-import com.rerollyourbody.gymbro.core.model.Plan;
+import com.rerollyourbody.gymbro.core.model.DTO.RoutineDTO;
 import com.rerollyourbody.gymbro.core.model.Routine;
-import com.rerollyourbody.gymbro.core.model.factory.PlanFactory;
 import com.rerollyourbody.gymbro.core.model.factory.RoutineFactory;
+import com.rerollyourbody.gymbro.testUtils.TestUtils;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
+import static com.rerollyourbody.gymbro.testUtils.TestUtils.createRoutine;
+import static com.rerollyourbody.gymbro.testUtils.TestUtils.createValidRoutineDTO;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class RoutineFactoryTest {
     @Test
     public void test_createRoutine() {
         Routine routine = RoutineFactory.createRoutine();
 
-        Routine templateRoutine = new Routine();
-        templateRoutine.setRoutineId(routine.getRoutineId()); //This is awful. I know. But I'm in the middle of a production crisis => More work == Better
+        Routine templateRoutine = Routine.builder().build();
         templateRoutine.setWorkoutExercises(new ArrayList<>());
 
-        assertEquals(routine.getRoutineId(), templateRoutine.getRoutineId());
+        assertNotEquals(routine.getRoutineId(), templateRoutine.getRoutineId());
+        assertEquals(routine.getWorkoutExercises(), templateRoutine.getWorkoutExercises());
+    }
+
+    @Test
+    public void test_createRoutine_from_DTO() {
+        RoutineDTO routineDTO = createValidRoutineDTO();
+        Routine routine = RoutineFactory.createRoutine(routineDTO);
+
+        Routine templateRoutine = createRoutine();
+
+        assertNotEquals(routine.getRoutineId(), templateRoutine.getRoutineId());
         assertEquals(routine.getWorkoutExercises(), templateRoutine.getWorkoutExercises());
     }
 
