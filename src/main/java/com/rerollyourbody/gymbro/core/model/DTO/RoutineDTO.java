@@ -1,6 +1,7 @@
 package com.rerollyourbody.gymbro.core.model.DTO;
 
 import com.rerollyourbody.gymbro.core.model.Exercise;
+import com.rerollyourbody.gymbro.core.model.ExerciseBlock;
 import com.rerollyourbody.gymbro.core.model.Routine;
 import com.rerollyourbody.gymbro.core.model.Set;
 import lombok.AllArgsConstructor;
@@ -15,11 +16,11 @@ import java.util.Map;
 @NoArgsConstructor
 public class RoutineDTO {
     private String id;
-    private Map<Exercise, List<Set>> exercises;
+    private List<ExerciseBlock> exercises;
 
     public static RoutineDTO of(Routine routine){
         return new RoutineDTO(
-                routine.getRoutineId().toString(),
+                routine.getId().toString(),
                 routine.getExercises()
         );
     }

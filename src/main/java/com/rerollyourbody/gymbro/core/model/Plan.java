@@ -1,24 +1,28 @@
 package com.rerollyourbody.gymbro.core.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.Id;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
+@Entity
+@Table
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Plan {
-    @Id
-    private UUID id;
-    private UUID userId;
+public class Plan extends BaseEntity{
+    @ManyToOne
+    private User user;
 
+    @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Routine> routines;
     private Integer week;
     private Integer totalWeeks;

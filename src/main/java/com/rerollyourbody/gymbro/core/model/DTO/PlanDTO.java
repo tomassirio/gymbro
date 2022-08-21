@@ -16,8 +16,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlanDTO {
-    private UUID planId;
-    private UUID userId;
+    private Long planId;
+    private Long userId;
 
     private List<Routine> routines;
     private Integer week;
@@ -26,7 +26,7 @@ public class PlanDTO {
     public static PlanDTO of(Plan plan){
         return new PlanDTO(
                 plan.getId(),
-                plan.getUserId(),
+                plan.getUser().getId(),
                 plan.getRoutines(),
                 plan.getWeek(),
                 plan.getTotalWeeks()

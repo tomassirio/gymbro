@@ -2,12 +2,19 @@ package com.rerollyourbody.gymbro.core.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table
 @Getter
 @Setter
-public class Set {
+@NoArgsConstructor
+@AllArgsConstructor
+public class Set extends BaseEntity{
     private Integer repetitions;
     private Float weight;
 }

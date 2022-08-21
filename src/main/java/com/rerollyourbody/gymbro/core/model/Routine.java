@@ -4,44 +4,29 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Entity
+@Table
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class Routine {
-    private UUID routineId;
-    private Map<Exercise, List<Set>> exercises;
+public class Routine extends BaseEntity{
 
-    public void addExercise(Exercise exercise) {
-        this.exercises.put(exercise, new ArrayList<>());
-    }
-
-    public void removeExercise(Exercise exercise) {
-        this.exercises.remove(exercise);
-    }
-
-    public void addSet(Exercise exercise, Set set) {
-        if (this.exercises.containsKey(exercise)) {
-            this.exercises.put(exercise, List.of(set));
-        } else {
-            List<Set> sets = this.exercises.get(exercise);
-            sets.add(set);
-            this.exercises.replace(exercise, sets);
-        }
-    }
-
-    public void removeSet(Exercise exercise, Set set) {
-        if (this.exercises.containsKey(exercise)) {
-            List<Set> sets = this.exercises.get(exercise);
-            sets.remove(set);
-            this.exercises.replace(exercise, sets);
-        }
-    }
+    @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<ExerciseBlock> exercises;
 }
 
